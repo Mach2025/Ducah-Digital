@@ -58,3 +58,57 @@ class Sale(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.quantity}"
+    
+class Payment(models.Model):
+    PAYMENT_METHODS = [
+        ('Cash', 'Cash'),
+        ('Mpesa', 'Mpesa'),
+        ('Card', 'Card'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
+        ('Failed', 'Failed'),
+    ]
+
+    sale = models.ForeignKey(
+        Sale,
+        on_delete=models.CASCADE,
+        related_name='payments'
+    )
+
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_METHODS
+    )
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    transaction_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True
+    )
+
+    phone_number = models.CharField(
+        max_length=15,
+        blank=True,
+        null=True
+    )
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='Pending'
+    )
+
+    paid_at = models.DateTimeField(
+        default=timezone.now
+    )
+
+    def __str__(self):
+        return f"{self.payment_method} - KSh {self.amount}"
