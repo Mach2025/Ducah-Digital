@@ -5,6 +5,7 @@ from .models import Product,Sale
 from .serializers import ProductSerializer,SaleSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Count, Sum,F
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -17,4 +18,19 @@ class SaleViewSet(viewsets.ModelViewSet):
 
 class DashboardAPIView(APIView):
     def get(self, request):
-        return Response({'message': 'Welcome to Ducah Digital'})
+        total_products = Product.objects.count()
+        total_sales = Sale.objects.count()
+        today_revenue = Sale.objects.aggregate(
+    total=Sum('total_amount')
+)['total'] or 0
+        low_stock_products = Product.objects.filter(
+            quantity__lte=F('reorder_level')
+        ).count()
+
+        return Response({
+            'message': 'Welcome to Ducah Digital',
+            'total_products': total_products,
+            'total_sales': total_sales,
+            'today_revenue': today_revenue,
+            'low_stock_products': low_stock_products
+        })
