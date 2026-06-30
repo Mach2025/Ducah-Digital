@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Product,Sale
 from .serializers import ProductSerializer,SaleSerializer
-from rest_framework import APIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
@@ -15,6 +15,6 @@ class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer    
 
-class DashboardView(APIView):
+class DashboardAPIView(APIView):
     def get(self, request):
         return Response({'message': 'Welcome to Ducah Digital'})
